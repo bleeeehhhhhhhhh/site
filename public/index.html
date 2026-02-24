@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sityy — Songs, Notes, Photos</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="bg"></div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">S</div>
+        <div>
+          <div class="brand__title">Sityy</div>
+          <div class="brand__subtitle">Spotify • Notes • Photos</div>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="btn btn--ghost" id="btnReset" type="button" title="Clear only your input fields">
+          Clear
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="grid">
+        <article class="card">
+          <div class="card__header">
+            <h2>Spotify songs</h2>
+            <p class="muted">Paste a Spotify link (track/album/playlist) and save it.</p>
+          </div>
+
+          <form class="stack" id="spotifyForm" autocomplete="off">
+            <label class="field">
+              <span class="field__label">Spotify URL</span>
+              <input
+                class="input"
+                id="spotifyUrl"
+                type="url"
+                placeholder="https://open.spotify.com/track/…"
+                required
+              />
+            </label>
+
+            <div class="row">
+              <button class="btn" type="submit" id="btnAddSong">Add song</button>
+              <button class="btn btn--ghost" type="button" id="btnDemoSong" title="Add a demo song">
+                Demo
+              </button>
+            </div>
+          </form>
+
+          <div class="divider"></div>
+
+          <div class="stack" id="spotifyList" aria-live="polite"></div>
+        </article>
+
+        <article class="card">
+          <div class="card__header">
+            <h2>Text + edit</h2>
+            <p class="muted">Type something, save it, then edit anytime.</p>
+          </div>
+
+          <div class="stack">
+            <label class="field">
+              <span class="field__label">Title</span>
+              <input class="input" id="noteTitle" type="text" placeholder="My note title…" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Text</span>
+              <textarea class="textarea" id="noteBody" rows="7" placeholder="Write here…"></textarea>
+            </label>
+
+            <div class="row">
+              <button class="btn" type="button" id="btnSaveNote">Save note</button>
+              <button class="btn btn--ghost" type="button" id="btnLoadNote">Load saved</button>
+            </div>
+
+            <div class="notePreview" id="notePreview" hidden>
+              <div class="notePreview__meta">Saved preview</div>
+              <div class="notePreview__title" id="notePreviewTitle"></div>
+              <div class="notePreview__body" id="notePreviewBody"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card--span2">
+          <div class="card__header">
+            <h2>Upload photos with text</h2>
+            <p class="muted">Pick an image, add a caption, and save. Stored locally in this browser.</p>
+          </div>
+
+          <form class="stack" id="photoForm">
+            <div class="row row--wrap">
+              <label class="field grow">
+                <span class="field__label">Photo</span>
+                <input class="input input--file" id="photoFile" type="file" accept="image/*" />
+              </label>
+              <label class="field grow">
+                <span class="field__label">Caption</span>
+                <input class="input" id="photoCaption" type="text" placeholder="Say something about this photo…" />
+              </label>
+            </div>
+
+            <div class="row">
+              <button class="btn" type="submit" id="btnSavePhoto">Save photo</button>
+              <button class="btn btn--ghost" type="button" id="btnClearPhotoForm">Clear</button>
+            </div>
+
+            <div class="photoHint" id="photoHint"></div>
+          </form>
+
+          <div class="divider"></div>
+
+          <div class="gallery" id="photoGallery" aria-live="polite"></div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span class="muted">Tip: everything is saved in your browser (localStorage).</span>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+
