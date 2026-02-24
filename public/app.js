@@ -234,7 +234,7 @@ async function renderPhotos() {
     card.className = "photoCard";
 
     const img = document.createElement("img");
-    img.src = p.dataUrl;
+    img.src = p.data_url;
     img.alt = p.caption ? `Photo: ${p.caption}` : "Uploaded photo";
     img.loading = "lazy";
 

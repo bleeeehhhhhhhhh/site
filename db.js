@@ -42,11 +42,22 @@ async function initDb() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS photos (
       id SERIAL PRIMARY KEY,
-      image_url TEXT NOT NULL,
-      cloudinary_public_id TEXT NOT NULL,
+      image_url TEXT,
+      cloudinary_public_id TEXT,
       caption TEXT NOT NULL DEFAULT '',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+  `);
+
+  await pool.query(`
+    ALTER TABLE photos
+    ALTER COLUMN image_url DROP NOT NULL,
+    ALTER COLUMN cloudinary_public_id DROP NOT NULL;
+  `).catch(() => {});
+
+  await pool.query(`
+    ALTER TABLE photos
+    ADD COLUMN IF NOT EXISTS data_url TEXT NOT NULL DEFAULT '';
   `);
 }
 

@@ -4,7 +4,6 @@ const multer = require("multer");
 
 const { pool, initDb } = require("./db");
 const { parseSpotify, spotifyCanonicalUrl } = require("./spotify");
-const { getCloudinary } = require("./cloudinaryClient");
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -74,7 +73,7 @@ app.put("/api/note", async (req, res) => {
 
 app.get("/api/photos", async (_req, res) => {
   const { rows } = await pool.query(
-    "SELECT id, image_url, caption, created_at FROM photos ORDER BY created_at DESC, id DESC LIMIT 60"
+    "SELECT id, data_url, caption, created_at FROM photos ORDER BY created_at DESC, id DESC LIMIT 60"
   );
   res.json({ photos: rows });
 });
@@ -85,42 +84,19 @@ const upload = multer({
 });
 
 app.post("/api/photos", upload.single("photo"), async (req, res) => {
-  const cloudinary = getCloudinary();
-  if (!cloudinary) {
-    return res.status(500).json({
-      error:
-        "Cloudinary is not configured. Set CLOUDINARY_URL (or CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET).",
-    });
-  }
-
   const file = req.file;
   if (!file) return res.status(400).json({ error: "Missing photo" });
 
   const caption = String((req.body && req.body.caption) || "").slice(0, 240);
 
   try {
-    const uploadResult = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: "sityy",
-          resource_type: "image",
-        },
-        (err, result) => {
-          if (err) return reject(err);
-          resolve(result);
-        }
-      );
-      stream.end(file.buffer);
-    });
-
-    const imageUrl = uploadResult.secure_url;
-    const publicId = uploadResult.public_id;
+    const dataUrl = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
     const { rows } = await pool.query(
-      `INSERT INTO photos (image_url, cloudinary_public_id, caption)
-       VALUES ($1, $2, $3)
-       RETURNING id, image_url, caption, created_at`,
-      [imageUrl, publicId, caption]
+      `INSERT INTO photos (data_url, caption)
+       VALUES ($1, $2)
+       RETURNING id, data_url, caption, created_at`,
+      [dataUrl, caption]
     );
 
     res.json({ photo: rows[0] });
@@ -133,21 +109,7 @@ app.delete("/api/photos/:id", async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isFinite(id)) return res.status(400).json({ error: "Bad id" });
 
-  const { rows } = await pool.query("SELECT cloudinary_public_id FROM photos WHERE id = $1", [id]);
-  const row = rows[0];
-  if (!row) return res.json({ ok: true });
-
   await pool.query("DELETE FROM photos WHERE id = $1", [id]);
-
-  const cloudinary = getCloudinary();
-  if (cloudinary) {
-    try {
-      await cloudinary.uploader.destroy(row.cloudinary_public_id, { resource_type: "image" });
-    } catch {
-      // ignore cleanup failure
-    }
-  }
-
   res.json({ ok: true });
 });
 

@@ -40,20 +40,15 @@ git push -u origin main
 - Render will detect `render.yaml` and create the web service
 - When it finishes, you’ll get a public URL like `https://xxxx.onrender.com`
 
-3) Add Cloudinary (required for photo uploads):
-- Create a free Cloudinary account
-- In Render → your service → **Environment**
-  - add `CLOUDINARY_URL` (recommended)  
-    or add `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-
 ### Important note about “sharing”
 
 - After deploy, **everyone sees the same songs/text/photos** (stored in Postgres + Cloudinary).
+- After deploy, **everyone sees the same songs/text/photos** (stored in Postgres).
 - If you want logins / private posts / only-you-can-delete, tell me and I’ll add auth.
 
 ### Features
 
 - Add Spotify links (track/album/playlist/show/episode) and view embeds
 - Write/edit shared text note
-- Upload photos with captions (stored in Cloudinary)
+- Upload photos with captions (stored directly in the database; small personal use recommended)
 
